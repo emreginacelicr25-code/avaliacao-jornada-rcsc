@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avaliação da Jornada — E.M. Regina Celi da Silva Cerdeira</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="this.dataset.failed='1'; var s=document.createElement('script'); s.src='https://unpkg.com/@supabase/supabase-js@2'; s.onerror=function(){ window.__supabaseLoadFailed = true; }; document.head.appendChild(s);"></script>
+<style>
+  :root {
+    --navy: #1F3864;
+    --gold: #B08D57;
+    --teal: #2E7D6B;
+    --cream: #FAF8F5;
+    --border: #E8E3D8;
+    --text: #333333;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--cream);
+    font-family: Georgia, 'Times New Roman', serif;
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 24px 14px 60px;
+  }
+  .wrap { width: 100%; max-width: 640px; }
+  .school {
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #777;
+    margin-bottom: 6px;
+    font-family: system-ui, sans-serif;
+  }
+  .banner {
+    background: var(--navy);
+    border-radius: 8px;
+    padding: 22px 20px;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  .banner h1 { color: #fff; font-size: 22px; margin: 0 0 8px; }
+  .banner p { color: #E8C989; font-size: 14px; margin: 0; font-family: system-ui, sans-serif; }
+  .subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #555;
+    margin: 0 0 18px;
+    font-family: system-ui, sans-serif;
+    padding: 0 8px;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  label {
+    display: block;
+    font-family: system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .field { margin-bottom: 24px; }
+  input[type="text"], textarea {
+    width: 100%;
+    padding: 9px 11px;
+    border: 1px solid #D8D2C7;
+    border-radius: 5px;
+    font-family: system-ui, sans-serif;
+    font-size: 14px;
+    resize: vertical;
+  }
+  input[type="text"]:focus, textarea:focus {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 2px rgba(46,125,107,0.15);
+  }
+  .escala {
+    display: flex;
+    gap: 6px;
+    justify-content: space-between;
+  }
+  .escala-opcao {
+    flex: 1;
+    text-align: center;
+  }
+  .escala-opcao input { display: none; }
+  .escala-opcao .bolha {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 44px;
+    border-radius: 8px;
+    background: #EFEBE3;
+    color: var(--navy);
+    font-family: system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .escala-opcao input:checked + .bolha {
+    background: var(--teal);
+    color: #fff;
+    border-color: var(--navy);
+  }
+  .escala-legendas {
+    display: flex;
+    justify-content: space-between;
+    font-family: system-ui, sans-serif;
+    font-size: 11px;
+    color: #999;
+    margin-top: 4px;
+  }
+  .opcoes-texto { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+  .opcao-texto {
+    flex: 1; min-width: 100px;
+  }
+  .opcao-texto input { display: none; }
+  .opcao-texto .pill {
+    display: block; text-align: center; padding: 10px 8px;
+    border-radius: 8px; background: #EFEBE3; color: var(--navy);
+    font-family: system-ui, sans-serif; font-size: 13px; font-weight: 600;
+    cursor: pointer; border: 2px solid transparent;
+  }
+  .opcao-texto input:checked + .pill {
+    background: var(--teal); color: #fff; border-color: var(--navy);
+  }
+  button {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 6px;
+    background: var(--teal);
+    color: #fff;
+    font-family: system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  button:disabled { opacity: 0.6; cursor: default; }
+  .erro {
+    background: #F5E4E4;
+    color: #8A2A2A;
+    font-family: system-ui, sans-serif;
+    font-size: 13px;
+    padding: 9px 12px;
+    border-radius: 5px;
+    margin-bottom: 14px;
+  }
+  .link-respostas {
+    display: block;
+    text-align: center;
+    margin-top: 18px;
+    font-family: system-ui, sans-serif;
+    font-size: 13px;
+    color: var(--teal);
+    text-decoration: underline;
+    cursor: pointer;
+    background: none;
+    border: none;
+    width: auto;
+    padding: 0;
+  }
+  .obrigado { text-align: center; }
+  .check {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: #E4EFE4; color: var(--teal);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; margin: 0 auto 14px;
+  }
+  .obrigado h2 { color: var(--navy); font-size: 18px; margin: 0 0 8px; }
+  .obrigado p { font-family: system-ui, sans-serif; color: #555; font-size: 14px; margin: 0 0 18px; }
+  .resposta-item {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+  .hidden { display: none; }
+
+  .subnav { display: flex; gap: 8px; margin-bottom: 16px; }
+  .subnav button {
+    flex: 1; width: auto; background: #EFEBE3; color: var(--navy);
+    font-size: 13px; padding: 9px; border-radius: 6px;
+  }
+  .subnav button.ativo { background: var(--navy); color: #fff; }
+
+  .resumo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+  .resumo-card {
+    background: var(--cream); border: 1px solid var(--border); border-radius: 6px;
+    padding: 12px; text-align: center; font-family: system-ui, sans-serif;
+  }
+  .resumo-card .numero { font-size: 24px; font-weight: 700; color: var(--navy); }
+  .resumo-card .rotulo { font-size: 11px; color: #777; margin-top: 2px; }
+
+  .barra-linha { margin-bottom: 10px; font-family: system-ui, sans-serif; font-size: 13px; }
+  .barra-linha .topo { display: flex; justify-content: space-between; margin-bottom: 3px; }
+  .barra-fundo { background: #EFEBE3; border-radius: 4px; height: 10px; overflow: hidden; }
+  .barra-preenchida { background: var(--teal); height: 100%; border-radius: 4px; }
+
+  .bloco-titulo {
+    font-family: system-ui, sans-serif; font-weight: 700; color: var(--teal);
+    font-size: 13px; margin: 18px 0 8px; text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .resposta-aberta {
+    font-family: system-ui, sans-serif; font-size: 13px; padding: 8px 10px;
+    border-left: 3px solid var(--gold); background: var(--cream); margin-bottom: 6px; border-radius: 0 4px 4px 0;
+  }
+  .btn-imprimir { background: var(--navy); margin-top: 6px; margin-right: 8px; }
+  .acoes-analise { display: flex; gap: 8px; flex-wrap: wrap; }
+  .acoes-analise button { width: auto; flex: 1; min-width: 160px; }
+
+  #print-header { display: none; }
+
+  @media print {
+    body * { visibility: hidden; }
+    #painel-analise, #painel-analise * { visibility: visible; }
+    #painel-analise { position: absolute; left: 0; top: 0; width: 100%; padding: 0; }
+    .acoes-analise, .subnav, .link-respostas { display: none !important; }
+    #print-header {
+      display: block; text-align: center; margin-bottom: 18px;
+      border-bottom: 3px solid var(--navy); padding-bottom: 10px;
+    }
+    #print-header .escola { font-weight: 700; color: var(--navy); font-size: 15px; }
+    #print-header .sub { color: #555; font-size: 12px; margin-top: 2px; }
+    #print-header .titulo { font-weight: 700; color: var(--navy); font-size: 18px; margin-top: 10px; }
+    #print-header .data { color: #777; font-size: 11px; margin-top: 4px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="js-status" style="background:#8A2A2A; color:#fff; text-align:center; padding:10px; border-radius:6px; margin-bottom:14px; font-family:system-ui,sans-serif; font-size:13px;">
+    ⚠️ Carregando sistema... pode levar alguns segundos. Se esta mensagem não desaparecer em 10-15 segundos, avise a equipe gestora com um print desta tela.
+  </div>
+  <p class="school">E.M. Regina Celi da Silva Cerdeira</p>
+  <div class="banner">
+    <h1>Avaliação da Jornada Pedagógica</h1>
+    <p>03 de Agosto de 2026 — sua opinião em menos de 2 minutos</p>
+  </div>
+  <p class="subtitle">Resposta rápida e não identificada. Ajuda a melhorar as próximas formações.</p>
+
+  <!-- TELA: FORMULÁRIO -->
+  <div id="tela-form" class="card">
+    <form id="form-avaliacao" onsubmit="return false;">
+      <div class="field">
+        <label for="segmento">Segmento / área em que atua</label>
+        <input type="text" id="segmento" placeholder="Ex.: 3º ano, Classe Especial, Educação Física...">
+      </div>
+
+      <div class="field">
+        <label>1. Como você avalia o dia de hoje, no geral?</label>
+        <div class="escala" id="escala-geral"></div>
+        <div class="escala-legendas"><span>Muito fraco</span><span>Excelente</span></div>
+      </div>
+
+      <div class="field">
+        <label>2. A explicação sobre as camadas e os dois trilhos ficou clara?</label>
+        <div class="escala" id="escala-clareza"></div>
+        <div class="escala-legendas"><span>Nada clara</span><span>Muito clara</span></div>
+      </div>
+
+      <div class="field">
+        <label>3. As oficinas práticas ajudaram você a saber como aplicar no dia a dia?</label>
+        <div class="escala" id="escala-oficinas"></div>
+        <div class="escala-legendas"><span>Não ajudaram</span><span>Ajudaram muito</span></div>
+      </div>
+
+      <div class="field">
+        <label>4. Como você avalia a didática de quem conduziu as apresentações?</label>
+        <div class="escala" id="escala-didatica"></div>
+        <div class="escala-legendas"><span>Muito fraca</span><span>Excelente</span></div>
+      </div>
+
+      <div class="field">
+        <label>5. O plano de aula do seu segmento está pronto para ser aplicado em turma?</label>
+        <div class="opcoes-texto" id="opcoes-plano"></div>
+      </div>
+
+      <div class="field">
+        <label>6. Você se sente preparado(a) para aplicar o protocolo agora?</label>
+        <div class="escala" id="escala-preparo"></div>
+        <div class="escala-legendas"><span>Nada preparado</span><span>Muito preparado</span></div>
+      </div>
+
+      <div class="field">
+        <label for="pontosPositivos">7. O que mais funcionou bem hoje? (opcional)</label>
+        <textarea id="pontosPositivos" rows="2"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="pontosMelhoria">8. O que poderia melhorar em futuras formações? (opcional)</label>
+        <textarea id="pontosMelhoria" rows="2"></textarea>
+      </div>
+
+      <div id="erro-msg" class="erro hidden"></div>
+
+      <button type="submit" id="btn-enviar">Enviar avaliação</button>
+    </form>
+  </div>
+
+  <div id="acesso-respostas" style="text-align:center; margin-top:18px; font-family:system-ui, sans-serif;">
+    <button class="link-respostas" id="btn-ver-respostas" style="margin-bottom:0;">Ver resultados (equipe gestora)</button>
+    <div id="caixa-chave" class="hidden" style="margin-top:10px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap; align-items:center;">
+      <input type="password" id="input-chave" placeholder="Chave de acesso" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" style="max-width:180px; padding:8px 10px; border:1px solid #D8D2C7; border-radius:5px; font-size:13px;">
+      <button type="button" id="btn-mostrar-senha" style="width:auto; padding:8px 10px; font-size:13px; background:#EFEBE3; color:var(--navy);">👁</button>
+      <button id="btn-confirmar-chave" style="width:auto; padding:8px 16px; font-size:13px;">Entrar</button>
+    </div>
+    <div id="erro-chave" class="hidden" style="color:#8A2A2A; font-size:12px; margin-top:6px;">Chave incorreta.</div>
+  </div>
+
+  <!-- TELA: OBRIGADO -->
+  <div id="tela-obrigado" class="card obrigado hidden">
+    <div class="check">✓</div>
+    <h2>Avaliação registrada</h2>
+    <p>Obrigado pela sua contribuição! Sua opinião ajuda a melhorar as próximas formações.</p>
+    <button class="link-respostas" id="btn-nova-resposta" style="text-decoration:underline;">Preencher outra avaliação neste dispositivo</button>
+  </div>
+
+  <!-- TELA: RESPOSTAS -->
+  <div id="tela-respostas" class="card hidden">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <h2 style="color:var(--navy); font-size:16px; margin:0; font-family:system-ui, sans-serif;">Resultados da Avaliação</h2>
+      <button class="link-respostas" id="btn-voltar-form" style="width:auto;">Voltar ao formulário</button>
+    </div>
+    <div id="painel-analise">
+      <div id="print-header">
+        <div class="escola">E.M. Regina Celi da Silva Cerdeira</div>
+        <div class="sub">Centro de Referência em Educação Inclusiva — Duque de Caxias/RJ</div>
+        <div class="titulo">Relatório — Avaliação da Jornada Pedagógica de 03/08/2026</div>
+        <div class="data" id="print-data"></div>
+      </div>
+      <div id="analise-conteudo" style="font-family:system-ui, sans-serif; font-size:13px; color:#777;">Carregando...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ==== CONFIGURAÇÃO — projeto rcsc-inclusao ====
+  const SUPABASE_URL = "https://vjxsvcohipeyepfbkmro.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqeHN2Y29oaXBleWVwZmJrbXJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0Mjc3ODgsImV4cCI6MjA5ODAwMzc4OH0.1PKY50o6FKLHKHh0dn0eEs__J15cujPy5L-7cDc0QJ8";
+  const CHAVE_ACESSO_RESPOSTAS = "cerdeira2026";
+  // ================================================
+
+  const ESCALAS = {
+    "escala-geral": "avaliacaoGeral",
+    "escala-clareza": "clarezaCamadas",
+    "escala-oficinas": "utilidadeOficinas",
+    "escala-didatica": "didaticaFacilitadores",
+    "escala-preparo": "preparoAplicar",
+  };
+  const dadosEscala = {};
+
+  function montarEscala(idContainer, campo) {
+    const container = document.getElementById(idContainer);
+    for (let i = 1; i <= 5; i++) {
+      const label = document.createElement("label");
+      label.className = "escala-opcao";
+      label.innerHTML = '<input type="radio" name="' + idContainer + '" value="' + i + '"><span class="bolha">' + i + "</span>";
+      label.querySelector("input").addEventListener("change", () => { dadosEscala[campo] = i; });
+      container.appendChild(label);
+    }
+  }
+  Object.keys(ESCALAS).forEach((id) => montarEscala(id, ESCALAS[id]));
+
+  let planoEscolhido = "";
+  function montarOpcoesPlano() {
+    const container = document.getElementById("opcoes-plano");
+    ["Sim", "Parcialmente", "Não"].forEach((op) => {
+      const label = document.createElement("label");
+      label.className = "opcao-texto";
+      label.innerHTML = '<input type="radio" name="plano-pronto" value="' + op + '"><span class="pill">' + op + "</span>";
+      label.querySelector("input").addEventListener("change", () => { planoEscolhido = op; });
+      container.appendChild(label);
+    });
+  }
+  montarOpcoesPlano();
+
+  const jsStatus = document.getElementById("js-status");
+
+  async function aguardarBiblioteca(timeoutMs = 10000) {
+    const inicio = Date.now();
+    while (!window.supabase) {
+      if (window.__supabaseLoadFailed || Date.now() - inicio > timeoutMs) return false;
+      await new Promise((r) => setTimeout(r, 200));
+    }
+    return true;
+  }
+
+  (async function main() {
+    const carregou = await aguardarBiblioteca();
+    if (!carregou) {
+      document.body.innerHTML =
+        '<div style="max-width:500px;margin:60px auto;padding:20px;font-family:system-ui,sans-serif;text-align:center;color:#8A2A2A;background:#F5E4E4;border-radius:8px;">' +
+        '<strong>Não foi possível carregar o formulário.</strong><br>A biblioteca necessária não carregou mesmo tentando dois servidores diferentes — tente trocar de rede (dados móveis / Wi-Fi) e recarregar. Se persistir, avise a equipe gestora.</div>';
+      return;
+    }
+    if (jsStatus) jsStatus.remove();
+
+    let supabase;
+    try {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } catch (e) {
+      console.error(e);
+      document.body.innerHTML =
+        '<div style="max-width:500px;margin:60px auto;padding:20px;font-family:system-ui,sans-serif;text-align:center;color:#8A2A2A;background:#F5E4E4;border-radius:8px;">' +
+        '<strong>Não foi possível iniciar o formulário.</strong><br>Avise a equipe gestora com este erro: ' + (e && e.message ? e.message : "desconhecido") + '</div>';
+      return;
+    }
+
+    const telaForm = document.getElementById("tela-form");
+    const acessoRespostas = document.getElementById("acesso-respostas");
+    const telaObrigado = document.getElementById("tela-obrigado");
+    const telaRespostas = document.getElementById("tela-respostas");
+    const erroMsg = document.getElementById("erro-msg");
+    const btnEnviar = document.getElementById("btn-enviar");
+    const btnVerRespostas = document.getElementById("btn-ver-respostas");
+    const caixaChave = document.getElementById("caixa-chave");
+    const inputChave = document.getElementById("input-chave");
+    const erroChave = document.getElementById("erro-chave");
+
+    function mostrar(tela) {
+      telaForm.classList.add("hidden");
+      acessoRespostas.classList.add("hidden");
+      telaObrigado.classList.add("hidden");
+      telaRespostas.classList.add("hidden");
+      tela.classList.remove("hidden");
+    }
+
+    document.getElementById("form-avaliacao").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      erroMsg.classList.add("hidden");
+
+      const camposEscala = Object.values(ESCALAS);
+      const faltando = camposEscala.some((c) => !dadosEscala[c]);
+      if (faltando) {
+        erroMsg.textContent = "Por favor, responda todas as perguntas de escala (1 a 5) antes de enviar.";
+        erroMsg.classList.remove("hidden");
+        return;
+      }
+      if (!planoEscolhido) {
+        erroMsg.textContent = "Por favor, responda à pergunta 5 antes de enviar.";
+        erroMsg.classList.remove("hidden");
+        return;
+      }
+
+      btnEnviar.disabled = true;
+      btnEnviar.textContent = "Enviando...";
+
+      const payload = {
+        segmento: document.getElementById("segmento").value.trim(),
+        avaliacao_geral: dadosEscala.avaliacaoGeral,
+        clareza_camadas: dadosEscala.clarezaCamadas,
+        utilidade_oficinas: dadosEscala.utilidadeOficinas,
+        didatica_facilitadores: dadosEscala.didaticaFacilitadores,
+        preparo_aplicar: dadosEscala.preparoAplicar,
+        plano_pronto: planoEscolhido,
+        pontos_positivos: document.getElementById("pontosPositivos").value.trim(),
+        pontos_melhoria: document.getElementById("pontosMelhoria").value.trim(),
+      };
+
+      try {
+        const { error } = await supabase.from("avaliacao_jornada").insert(payload);
+        if (error) throw error;
+        mostrar(telaObrigado);
+      } catch (err) {
+        erroMsg.textContent = "Não foi possível enviar agora: " + (err && err.message ? err.message : "erro desconhecido") + ". Avise a equipe gestora com essa mensagem.";
+        erroMsg.classList.remove("hidden");
+        console.error(err);
+      } finally {
+        btnEnviar.disabled = false;
+        btnEnviar.textContent = "Enviar avaliação";
+      }
+    });
+
+    document.getElementById("btn-nova-resposta").addEventListener("click", () => {
+      document.getElementById("form-avaliacao").reset();
+      Object.keys(dadosEscala).forEach((k) => delete dadosEscala[k]);
+      planoEscolhido = "";
+      mostrar(telaForm);
+      acessoRespostas.classList.remove("hidden");
+    });
+
+    document.getElementById("btn-voltar-form").addEventListener("click", () => {
+      mostrar(telaForm);
+      acessoRespostas.classList.remove("hidden");
+    });
+
+    btnVerRespostas.addEventListener("click", () => {
+      caixaChave.classList.remove("hidden");
+      erroChave.classList.add("hidden");
+      inputChave.focus();
+    });
+
+    async function tentarAcessoRespostas() {
+      erroChave.classList.add("hidden");
+      if (inputChave.value.trim() !== CHAVE_ACESSO_RESPOSTAS) {
+        erroChave.classList.remove("hidden");
+        return;
+      }
+      inputChave.value = "";
+      await carregarRespostas();
+    }
+    document.getElementById("btn-confirmar-chave").addEventListener("click", tentarAcessoRespostas);
+    inputChave.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") { e.preventDefault(); tentarAcessoRespostas(); }
+    });
+    document.getElementById("btn-mostrar-senha").addEventListener("click", () => {
+      inputChave.type = inputChave.type === "password" ? "text" : "password";
+    });
+
+    async function carregarRespostas() {
+      mostrar(telaRespostas);
+      const el = document.getElementById("analise-conteudo");
+      el.textContent = "Carregando...";
+
+      let data, error;
+      try {
+        ({ data, error } = await supabase.from("avaliacao_jornada").select("*").order("enviado_em", { ascending: false }));
+      } catch (err) { error = err; }
+
+      if (error) {
+        el.textContent = "Não foi possível carregar os resultados: " + (error && error.message ? error.message : "erro desconhecido");
+        console.error(error);
+        return;
+      }
+      renderizarAnalise(data || []);
+    }
+
+    const CAMPOS_ESCALA = [
+      { campo: "avaliacao_geral", rotulo: "Avaliação geral do dia" },
+      { campo: "clareza_camadas", rotulo: "Clareza sobre camadas e trilhos" },
+      { campo: "utilidade_oficinas", rotulo: "Utilidade das oficinas práticas" },
+      { campo: "didatica_facilitadores", rotulo: "Didática dos facilitadores" },
+      { campo: "preparo_aplicar", rotulo: "Sensação de preparo para aplicar" },
+    ];
+
+    function media(data, campo) {
+      const vals = data.map((r) => r[campo]).filter((v) => typeof v === "number");
+      if (!vals.length) return 0;
+      return vals.reduce((a, b) => a + b, 0) / vals.length;
+    }
+
+    function renderizarAnalise(data) {
+      const el = document.getElementById("analise-conteudo");
+      if (!data.length) {
+        el.textContent = "Ainda não há avaliações registradas.";
+        return;
+      }
+
+      let html = "";
+      html += '<div class="resumo-grid"><div class="resumo-card"><div class="numero">' + data.length + '</div><div class="rotulo">avaliações recebidas</div></div>' +
+        '<div class="resumo-card"><div class="numero">' + media(data, "avaliacao_geral").toFixed(1) + '/5</div><div class="rotulo">nota média geral</div></div></div>';
+
+      html += '<div class="bloco-titulo">Médias por critério</div>';
+      CAMPOS_ESCALA.forEach((c) => {
+        const m = media(data, c.campo);
+        const pct = Math.round((m / 5) * 100);
+        html += '<div class="barra-linha"><div class="topo"><span>' + c.rotulo + '</span><span>' + m.toFixed(1) + '/5</span></div>' +
+          '<div class="barra-fundo"><div class="barra-preenchida" style="width:' + pct + '%;"></div></div></div>';
+      });
+
+      const contPlano = { Sim: 0, Parcialmente: 0, "Não": 0 };
+      data.forEach((r) => { if (contPlano[r.plano_pronto] !== undefined) contPlano[r.plano_pronto]++; });
+      html += '<div class="bloco-titulo">Plano de aula pronto para aplicar?</div>';
+      Object.keys(contPlano).forEach((k) => {
+        const pct = Math.round((contPlano[k] / data.length) * 100);
+        html += '<div class="barra-linha"><div class="topo"><span>' + k + '</span><span>' + contPlano[k] + ' (' + pct + '%)</span></div>' +
+          '<div class="barra-fundo"><div class="barra-preenchida" style="width:' + pct + '%;"></div></div></div>';
+      });
+
+      ["pontos_positivos", "pontos_melhoria"].forEach((campo) => {
+        const rotulo = campo === "pontos_positivos" ? "O que funcionou bem" : "O que pode melhorar";
+        const respostas = data.filter((r) => r[campo] && r[campo].trim());
+        html += '<div class="bloco-titulo">' + rotulo + ' (' + respostas.length + ')</div>';
+        html += respostas.length
+          ? respostas.map((r) => '<div class="resposta-aberta">' + (r.segmento ? '<em>' + r.segmento + ':</em> ' : "") + r[campo] + '</div>').join("")
+          : '<p style="color:#999;">Nenhuma resposta ainda.</p>';
+      });
+
+      html += '<div class="acoes-analise"><button class="btn-imprimir" id="btn-imprimir-relatorio">🖨️ Imprimir relatório</button></div>';
+      el.innerHTML = html;
+
+      document.getElementById("btn-imprimir-relatorio").addEventListener("click", () => {
+        const agora = new Date();
+        document.getElementById("print-data").textContent =
+          "Gerado em " + agora.toLocaleDateString("pt-BR") + " às " + agora.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+        window.print();
+      });
+    }
+  })();
+</script>
+</body>
+</html>
